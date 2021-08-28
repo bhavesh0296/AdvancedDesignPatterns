@@ -88,5 +88,5 @@ print("")
 
 
 mediator.invokeColleagues { delegate in
-    delegate.colleague(nil, didSendMessage: "Charge!!!")
+    delegate.colleague(nil, didSendMessage: "Charge!!")
 }

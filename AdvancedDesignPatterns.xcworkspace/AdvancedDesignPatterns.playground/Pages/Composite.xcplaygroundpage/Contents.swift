@@ -13,3 +13,85 @@
  
  ## Code Example
  */
+import Foundation
+
+protocol File {
+    var name: String {get set}
+    func open()
+}
+
+final class EBook: File {
+    var name: String
+    var author: String
+
+    init(name: String, author: String) {
+        self.name = name
+        self.author = author
+    }
+
+    func open() {
+        print("Opening \(name) by \(author) in iBooks...\n")
+    }
+}
+
+final class Music: File {
+    var name: String
+    var artist: String
+
+    init(name: String, artist: String) {
+        self.name = name
+        self.artist = artist
+    }
+
+    func open() {
+        print("Playing \(name) by \(artist) in iTunes...\n")
+    }
+}
+
+
+final class Folder: File {
+    var name: String
+    lazy var files: [File] = []
+
+    init(name: String) {
+        self.name = name
+    }
+
+    func addFile(_ file: File){
+        self.files.append(file)
+    }
+
+    func open() {
+        print("Displaying files into the Foler \(name)")
+        files.forEach { print($0.name)}
+    }
+}
+
+let beatIt = Music(name: "Beat It", artist: "Michael Jackson")
+
+let meHu = Music(name: "Me hu", artist: "Sanam")
+
+let atomicHabits = EBook(name: "Atomic Habits", author: "James Clear")
+let whoMovedMyCheese = EBook(name: "Who Moved My Cheese", author: "Jhon Spencer")
+
+let documents = Folder(name: "Documents")
+
+let musicFolder = Folder(name: "Music")
+let booksFolder = Folder(name: "E-Books")
+
+documents.addFile(musicFolder)
+documents.addFile(booksFolder)
+
+musicFolder.addFile(beatIt)
+musicFolder.addFile(meHu)
+
+booksFolder.addFile(atomicHabits)
+booksFolder.addFile(whoMovedMyCheese)
+
+meHu.open()
+
+documents.open()
+
+musicFolder.open()
+
+whoMovedMyCheese.open()
