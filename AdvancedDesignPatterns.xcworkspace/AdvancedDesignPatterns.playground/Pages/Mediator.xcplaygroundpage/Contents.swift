@@ -18,3 +18,75 @@
  ## Code Example
  */
 
+import UIKit
+
+public protocol Colleague: class {
+    func colleague(_ colleague: Colleague?,
+                   didSendMessage message: String)
+}
+
+
+public protocol MediatorProtocol: class {
+    func addColleague(_ colleague: Colleague)
+    func sendMessage(_ message: String, by colleague: Colleague)
+}
+
+public class Musketeer {
+    public var name: String
+    public weak var mediator: MediatorProtocol?
+
+    public init(name: String,
+                mediator: MediatorProtocol) {
+        self.name = name
+        self.mediator = mediator
+        mediator.addColleague(self)
+    }
+
+    public func sendMessage(_ message: String) {
+        print("\(name) sent: \(message)")
+        mediator?.sendMessage(message, by: self)
+    }
+}
+
+extension Musketeer: Colleague {
+    public func colleague(_ colleague: Colleague?,
+                   didSendMessage message: String){
+        print("\(name) received: \(message)")
+    }
+}
+
+public class MusketeerMediator: Mediator<Colleague> {
+
+}
+
+extension MusketeerMediator: MediatorProtocol {
+
+    public func addColleague(_ colleague: Colleague) {
+        self.addColleague(colleague, strongReference: true)
+    }
+
+    public func sendMessage(_ message: String, by colleague: Colleague) {
+        invokeColleagues(by: colleague) { delegate in
+            delegate.colleague(colleague, didSendMessage: message)
+        }
+    }
+}
+
+let mediator = MusketeerMediator()
+let athos = Musketeer(name: "Athos", mediator: mediator)
+let porthos = Musketeer(name: "Porthos", mediator: mediator)
+let aramis = Musketeer(name: "Aramis", mediator: mediator)
+
+athos.sendMessage("One for All...!")
+print("")
+
+porthos.sendMessage("and all for one...!")
+print("")
+
+aramis.sendMessage("This is our message...!")
+print("")
+
+
+mediator.invokeColleagues { delegate in
+    delegate.colleague(nil, didSendMessage: "Charge!!!")
+}
